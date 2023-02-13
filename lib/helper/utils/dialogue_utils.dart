@@ -1,35 +1,41 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, sized_box_for_whitespace, unnecessary_string_interpolations, unused_local_variable, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-import 'package:task07/helper/const/constants.dart';
+import 'package:task07/helper/const/dimension.dart';
+import 'package:task07/helper/const/screen_percentage.dart';
 import 'package:task07/helper/const/stringHelper.dart';
+import 'package:task07/presentation_layer/widgets/input_fields.dart';
 import 'package:task07/presentation_layer/widgets/sizedBox.dart';
+import 'package:task07/helper/extension/validation_helper.dart';
 class DialogUtils{
+  TextEditingController updateController = TextEditingController();
+
   dialogBox(BuildContext context,String txt)  {
+       Size size=MediaQuery.of(context).size;
         return AlertDialog(
           title:Text(StringHelper.UPDATE),
           content: SingleChildScrollView(
             child: Column(
-                  children: <Widget>[
-                  Container(
-              height: 150,
+            children: <Widget>[
+             Container(
+              height: size.height * ScreenPercentage.SCREEN_SIZE_20,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding:  EdgeInsets.all(Dimensions.PADDING_SIZE_DEFAULT),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: Constants.control.updateController..text='$txt',
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder()
-                      ),
-                    ),
+                    TextFieldWidget(
+                       textEditingController: updateController..text='$txt',
+                       validator:(val) => '$val'.isRequired()? null:StringHelper.REQ_FIELD,
+                        type: TextInputType.name,
+                        ),
+                       
                     SizeBoxWidget(),
                     Row(
                       children: [
                         SizedBox(
-                          width: 100.0,
+                          width: size.width * ScreenPercentage.SCREEN_SIZE_25,
                           child: Center(
                             child: ElevatedButton(
                               onPressed: ()=> Navigator.pop(context),
@@ -39,13 +45,13 @@ class DialogUtils{
                             ),
                           ),
                         ),
-                         SizedBox(
-                      width: 100.0,
+                      SizedBox(
+                       width: size.width * ScreenPercentage.SCREEN_SIZE_30,
                       child: Center(
                         child: ElevatedButton(
                           onPressed: () {
-                          if(Constants.control.updateController.text.isNotEmpty){
-                            Navigator.pop(context,Constants.control.updateController.text);
+                          if(updateController.text.isNotEmpty){
+                            Navigator.pop(context,updateController.text);
                             }
                           },
                           child: Text(

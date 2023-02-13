@@ -4,12 +4,15 @@
   import 'package:flutter/material.dart';
   import 'package:task07/helper/const/colorsHelper.dart';
   import 'package:task07/helper/const/commonkeys.dart';
+  import 'package:task07/helper/const/dimension.dart';
+  import 'package:task07/helper/const/screen_percentage.dart';
   import 'package:task07/helper/const/stringHelper.dart';
+  import 'package:task07/helper/utils/styles.dart';
   import 'package:task07/presentation_layer/widgets/common_appBar.dart';
   import 'package:task07/helper/extension/string_extension.dart';
   import 'package:task07/presentation_layer/widgets/sizedBox.dart';
   class GraphScreen extends StatelessWidget {
-    List data;
+    List<dynamic> data;
     String name;
     GraphScreen({
       Key? key,
@@ -22,18 +25,21 @@
       return Scaffold(
         appBar: PreferredSize(
           child: AppBarWidget(name: StringHelper.GRAPH_SCREEN), 
-          preferredSize: Size.fromHeight(50)
+          preferredSize: Size.fromHeight(Dimensions.D_50)
           ),
           body: SafeArea(
             child: Column(
               children: [
                 SizeBoxWidget(),
                 Container(
-                  child: Text(name).uppaerCase().textStyle(),
+                  child: Text(
+                    name.uppaerCase(),
+                    style: CustomTextStyle.nameTextStyle,
+                    ),
                 ),
                 Container(
-                padding: EdgeInsets.all(15),
-                  height: size.height/2,
+                padding: EdgeInsets.all(Dimensions.PADDING_SIZE_DEFAULT),
+                  height: size.height * ScreenPercentage.SCREEN_SIZE_50,
                   child: chartBar(),
                 ),
               ],

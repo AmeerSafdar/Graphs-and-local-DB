@@ -6,7 +6,7 @@ class ButtonWidgets extends StatelessWidget {
     Key? key,
     required this.pressed,
     required this.btnTXT
-  }) :super(key: key);
+  }):super(key: key);
   VoidCallback pressed;
   String btnTXT;
 

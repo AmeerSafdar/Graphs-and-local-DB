@@ -1,24 +1,8 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_type_check
+// ignore_for_file: prefer_const_constructors, unnecessary_type_check, unnecessary_this
 
 
-import 'package:flutter/material.dart';
-
-extension StringExtension on Text{
-  Text textStyle() {
-      Text t = this;
-      return Text(
-        t.data!,
-        style: TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.w500
-        ),
-      );
-      }
-
-  Text uppaerCase() {
-      Text t = this;
-      return Text(
-        t.data!.toUpperCase(),
-      );
-      }
+extension StringExtension on String{
+  String uppaerCase() {
+      return this.toUpperCase();
+    }
 }

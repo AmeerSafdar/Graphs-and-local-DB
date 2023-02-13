@@ -1,17 +1,17 @@
-// ignore_for_file: sort_child_properties_last, prefer_const_constructors
+// ignore_for_file: sort_child_properties_last, prefer_const_constructors, unused_local_variable, unnecessary_string_interpolations, prefer_collection_literals
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:task07/bloc/bloc.dart';
-import 'package:task07/bloc/events.dart';
-import 'package:task07/bloc/states.dart';
+import 'package:task07/bloc/main_screen_bloc.dart/main_screen_bloc.dart';
+import 'package:task07/bloc/main_screen_bloc.dart/main_screen_events.dart';
+import 'package:task07/bloc/main_screen_bloc.dart/main_screen_states.dart';
+import 'package:task07/helper/const/commonkeys.dart';
+import 'package:task07/helper/const/constants.dart';
+import 'package:task07/helper/const/dimension.dart';
 import 'package:task07/helper/const/stringHelper.dart';
-import 'package:task07/presentation_layer/views/add_screen.dart';
-import 'package:task07/presentation_layer/views/graph_screen.dart';
 import 'package:task07/presentation_layer/widgets/button_widget.dart';
 import 'package:task07/presentation_layer/widgets/common_appBar.dart';
 import 'package:task07/presentation_layer/widgets/inkwell_widget.dart';
-import 'package:task07/presentation_layer/widgets/sizedBox.dart';
 
 class MainScreen extends StatefulWidget {
 const MainScreen({super.key});
@@ -21,31 +21,33 @@ State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-final widgetKey = GlobalKey();
+
 @override
 void initState() {
+
 super.initState();
-BlocProvider.of<FieldsBloc>(context).add(GetData());
+BlocProvider.of<MainScreenBloc>(context).add(GetData());
+
 }
 
 @override
 Widget build(BuildContext context) {
-final bloc = BlocProvider.of<FieldsBloc>(context);
+final bloc = BlocProvider.of<MainScreenBloc>(context);
+
 return Scaffold(
     key: widgetKey,
     appBar: PreferredSize(
         child: AppBarWidget(name: StringHelper.MAIN_SCREEN),
-        preferredSize: Size.fromHeight(50)),
+        preferredSize: Size.fromHeight(Dimensions.D_50)),
     body: SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: EdgeInsets.all(Dimensions.PADDING_SIZE_DEFAULT),
         child: Column(
           children: [
-            BlocBuilder<FieldsBloc, States>(
+            BlocBuilder<MainScreenBloc, MainScreenStates>(
               builder: (context, state) {
-                if ((state.status == Status.dataAdded ||state.status == Status.updated  ||state.status == Status.addFields  ) &&
-                    state.keys != null) {
-                  return Expanded(
+                if ((state.dataUpdated==true ) && state.keys != null) {
+                   return Expanded(
                     child: ListView.builder(
                         itemCount: state.keys!.length,
                         itemBuilder: (context, index) {
@@ -53,39 +55,44 @@ return Scaffold(
                           var data=state.data;
                           return Card(
                             child: InkWell(
+
                               onLongPress: () async{
-                                await menuBar(context, bloc, key, index);
+                                await menuBar(context, bloc, key, index, key[index]);
                               },
+
                               onTap: () {
-                                Navigator.push(context,
-                                  MaterialPageRoute(builder: (context)=>
-                                              GraphScreen(data:data![index],name: key[index])));
+                                map[CommonKeys.DATA_KEY] = data![index];
+                                map[CommonKeys.NAME_KEY] = key[index];
+                                Navigator.of(context).pushNamed('/graphScreen',arguments: map);
                                 },
+
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0, vertical: 15),
-                                child: Text(key![index].toString()),
+                                padding:  EdgeInsets.symmetric(
+                                    horizontal:Dimensions.PADDING_SIZE_DEFAULT, vertical: Dimensions.PADDING_SIZE_DEFAULT),
+                                    child: Text(key![index].toString()
+                                ),
                               ),
                             ),
                           );
-                        }),
+                        }
+                        ),
                   );
                 }
-
-                return Container();
+                return Expanded(child: Container(),);
               },
             ),
+
             ButtonWidgets(
-                pressed: () => Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) => AddNewScreen())),
-                btnTXT: StringHelper.ADD_NEW_LIST)
+                pressed: () => Navigator.of(context).pushNamed('/addScreen'),
+                btnTXT: StringHelper.ADD_NEW_LIST
+                )
           ],
         ),
       ),
     ));
 }
 
-Future<int?> menuBar(BuildContext context, FieldsBloc bloc, List<dynamic> key, int index) {
+Future<int?> menuBar(BuildContext context, MainScreenBloc bloc, List<dynamic> key, int index,String name) {
 return showMenu(
     context: context,
     position: RelativeRect.fromLTRB(200, 150, 100, 100),
@@ -95,28 +102,31 @@ return showMenu(
                     child:InkwellWidget(
                     pressed: () {
                             Navigator.pop(context);
-                            bloc.add(
-                                  Deleteitem(
-                                  delteItemName:key[index])
-                                              ); 
+                            bloc.add(Deleteitem(delteItemName:key[index])); 
                                     },
-                            txt: StringHelper.DELETE),),
+                            txt: StringHelper.DELETE),
+                            ),
                             
             PopupMenuItem(
                         value: 2,
                         child:InkwellWidget(
-                              pressed: () {
+                              pressed: () async {
                               Navigator.pop(context);
-                              bloc.add(
-                                  UpdateData(
-                                      contxt: context,
-                                       index: index,
-                                      name: key[index]));
-                                            },
+                              String? updatedval=await Future.delayed(Duration.zero,(){
+                                    return showDialog(
+                                      barrierDismissible: false,
+                                      context: context, 
+                                     builder: ((context) => dialogUtils.dialogBox(context,name))
+                                          );
+                                    });
+                              if (updatedval !=null ) {
+                                  bloc.add(UpdateData(index: index, name: updatedval));
+                                  }
+                                },
                                   txt: StringHelper.EDIT),
                                       ),
                                 ],
-                             elevation: 8.0,
+                             elevation: Dimensions.D_8,
                              );
 }
 }

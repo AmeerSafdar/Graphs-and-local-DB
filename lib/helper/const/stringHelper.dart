@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 class StringHelper{
+  
   static String ADD_NEW_LIST="Add New List";
   static String ADD_NEW_VALUE="Add New Value";
   static String REQ_FIELD='Input field is required';
@@ -15,4 +16,5 @@ class StringHelper{
   static String UPDATE='Update';
   static String CANCEL='Cancel';
   static String NUMBER='Number';
+
 }
