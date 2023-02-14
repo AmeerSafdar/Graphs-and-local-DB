@@ -2,6 +2,6 @@
 
 extension Validate on String{
  bool isRequired(){
-    return this.isNotEmpty ;
+    return this.isNotEmpty;
   }
 }

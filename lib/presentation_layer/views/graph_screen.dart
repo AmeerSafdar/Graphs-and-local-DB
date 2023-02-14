@@ -11,6 +11,7 @@
   import 'package:task07/presentation_layer/widgets/common_appBar.dart';
   import 'package:task07/helper/extension/string_extension.dart';
   import 'package:task07/presentation_layer/widgets/sizedBox.dart';
+  import 'package:task07/presentation_layer/widgets/text_widget.dart';
   class GraphScreen extends StatelessWidget {
     List<dynamic> data;
     String name;
@@ -32,8 +33,8 @@
               children: [
                 SizeBoxWidget(),
                 Container(
-                  child: Text(
-                    name.uppaerCase(),
+                  child: TextWidget(
+                   txt: name.uppaerCase(),
                     style: CustomTextStyle.nameTextStyle,
                     ),
                 ),

@@ -1,4 +1,4 @@
-// ignore_for_file: sort_child_properties_last, prefer_const_constructors, unused_local_variable, unnecessary_string_interpolations, prefer_collection_literals
+// ignore_for_file: sort_child_properties_last, prefer_const_constructors, unused_local_variable, unnecessary_string_interpolations, prefer_collection_literals, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +11,7 @@ import 'package:task07/helper/const/dimension.dart';
 import 'package:task07/helper/const/stringHelper.dart';
 import 'package:task07/presentation_layer/widgets/button_widget.dart';
 import 'package:task07/presentation_layer/widgets/common_appBar.dart';
-import 'package:task07/presentation_layer/widgets/inkwell_widget.dart';
+import 'package:task07/presentation_layer/widgets/text_widget.dart';
 
 class MainScreen extends StatefulWidget {
 const MainScreen({super.key});
@@ -29,7 +29,14 @@ super.initState();
 BlocProvider.of<MainScreenBloc>(context).add(GetData());
 
 }
-
+  RenderObject? overlay;
+  Offset _tapPosition = Offset.zero;
+  
+  void _getTapPosition(TapDownDetails details) {
+    final RenderBox referenceBox = context.findRenderObject() as RenderBox;
+    _tapPosition = referenceBox.globalToLocal(details.globalPosition);
+     overlay =Overlay.of(context)?.context.findRenderObject();
+  }
 @override
 Widget build(BuildContext context) {
 final bloc = BlocProvider.of<MainScreenBloc>(context);
@@ -46,7 +53,7 @@ return Scaffold(
           children: [
             BlocBuilder<MainScreenBloc, MainScreenStates>(
               builder: (context, state) {
-                if ((state.dataUpdated==true ) && state.keys != null) {
+                if ((state.dataUpdated==true) && state.keys != null) {
                    return Expanded(
                     child: ListView.builder(
                         itemCount: state.keys!.length,
@@ -55,8 +62,9 @@ return Scaffold(
                           var data=state.data;
                           return Card(
                             child: InkWell(
-
+                              onTapDown: (details) => _getTapPosition(details),
                               onLongPress: () async{
+                               overlay =Overlay.of(context)?.context.findRenderObject();
                                 await menuBar(context, bloc, key, index, key[index]);
                               },
 
@@ -69,7 +77,7 @@ return Scaffold(
                               child: Padding(
                                 padding:  EdgeInsets.symmetric(
                                     horizontal:Dimensions.PADDING_SIZE_DEFAULT, vertical: Dimensions.PADDING_SIZE_DEFAULT),
-                                    child: Text(key![index].toString()
+                                    child: TextWidget(txt:key![index].toString()
                                 ),
                               ),
                             ),
@@ -94,36 +102,36 @@ return Scaffold(
 
 Future<int?> menuBar(BuildContext context, MainScreenBloc bloc, List<dynamic> key, int index,String name) {
 return showMenu(
+    
     context: context,
-    position: RelativeRect.fromLTRB(200, 150, 100, 100),
+    position: RelativeRect.fromRect(
+            Rect.fromLTWH(_tapPosition.dx, _tapPosition.dy, 30, 30),
+            Rect.fromLTWH(0, 0, overlay!.paintBounds.size.width,
+                overlay!.paintBounds.size.height)),
     items: [
             PopupMenuItem(
+                    onTap: () {
+                        bloc.add(Deleteitem(delteItemName:key[index])); 
+                    },
                     value: 1,
-                    child:InkwellWidget(
-                    pressed: () {
-                            Navigator.pop(context);
-                            bloc.add(Deleteitem(delteItemName:key[index])); 
-                                    },
-                            txt: StringHelper.DELETE),
+                    child:TextWidget(txt: StringHelper.DELETE)
                             ),
                             
             PopupMenuItem(
-                        value: 2,
-                        child:InkwellWidget(
-                              pressed: () async {
-                              Navigator.pop(context);
+                        onTap: () async{
                               String? updatedval=await Future.delayed(Duration.zero,(){
                                     return showDialog(
                                       barrierDismissible: false,
                                       context: context, 
                                      builder: ((context) => dialogUtils.dialogBox(context,name))
-                                          );
+                                     );
                                     });
-                              if (updatedval !=null ) {
+                          if (updatedval !=null ) {
                                   bloc.add(UpdateData(index: index, name: updatedval));
                                   }
-                                },
-                                  txt: StringHelper.EDIT),
+                        },
+                        value: 2,
+                        child:TextWidget(txt: StringHelper.EDIT)
                                       ),
                                 ],
                              elevation: Dimensions.D_8,

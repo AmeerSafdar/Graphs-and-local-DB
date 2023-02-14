@@ -7,6 +7,7 @@ import 'package:task07/helper/const/stringHelper.dart';
 import 'package:task07/presentation_layer/widgets/input_fields.dart';
 import 'package:task07/presentation_layer/widgets/sizedBox.dart';
 import 'package:task07/helper/extension/validation_helper.dart';
+import 'package:task07/presentation_layer/widgets/text_widget.dart';
 class DialogUtils{
   TextEditingController updateController = TextEditingController();
 
@@ -39,8 +40,8 @@ class DialogUtils{
                           child: Center(
                             child: ElevatedButton(
                               onPressed: ()=> Navigator.pop(context),
-                              child: Text(
-                                StringHelper.CANCEL,
+                              child: TextWidget(
+                                txt:StringHelper.CANCEL,
                               ),
                             ),
                           ),
@@ -54,8 +55,8 @@ class DialogUtils{
                             Navigator.pop(context,updateController.text);
                             }
                           },
-                          child: Text(
-                            StringHelper.UPDATE,
+                          child: TextWidget(
+                            txt:StringHelper.UPDATE,
                           ),
                         ),
                       ),

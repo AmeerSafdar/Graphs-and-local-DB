@@ -70,7 +70,6 @@ class _AddNewScreenState extends State<AddNewScreen> {
               child: Center(
                 child: Column(
                   children: [
-                    
                     TextFieldWidget(
                         type: TextInputType.name,
                         hintText: StringHelper.ENTER_LIST_NAME,
@@ -87,8 +86,7 @@ class _AddNewScreenState extends State<AddNewScreen> {
                             controllers.add(_controllers);
                             var text_field = fields.add(
                               TextFieldWidget(
-                              hintText:
-                                  '${StringHelper.NUMBER} ${controllers.length}',
+                              hintText:'${StringHelper.NUMBER} ${controllers.length}',
                               textEditingController: _controllers,
                               type: TextInputType.number,
                               validator: (val)=>'$val'.isRequired() ? null : StringHelper.REQ_FIELD
@@ -99,6 +97,7 @@ class _AddNewScreenState extends State<AddNewScreen> {
                         },
                         btnTXT: StringHelper.ADD_NEW_VALUE
                         ),
+                       
 
                     if (state.fieldsAdded == true)
                       Expanded(
@@ -112,20 +111,28 @@ class _AddNewScreenState extends State<AddNewScreen> {
                               );
                             })),
                       ),
-
-                    if (fields.length == 5 )
-                      ButtonWidgets(
+                    if(state.fieldsAdded != true)
+                      Expanded(child: Container()),
+                    
+                     ButtonWidgets(
                         btnTXT: StringHelper.DONE,
                         pressed: () {
-                          if (_formGlobalKey.currentState!.validate()) {
+                          if (_formGlobalKey.currentState!.validate() && controllers.length ==5) {
                             bloc.add(
                               AddData(
                                 controllers: controllers,
                                 listName: listNameController.text,
                                 mainBloc:mainBloc
                                 ));
-                                }},
-                            )
+                                }
+                                if (controllers.length!=5) {
+                                  buildSnackbar(context, StringHelper.ADD_NEW_VALUE);
+                                }
+                                },
+                            ),
+
+                    
+                      
                   ],
                 ),
               ),
